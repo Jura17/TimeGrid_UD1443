@@ -5,56 +5,83 @@ using UnityEngine;
 public class CarControls : MonoBehaviour
 {
 
-	public WheelCollider F_Left, F_Right, B_Left, B_Right;
-	public float SteerForce;
-	public float MotorForce;
-	public float BrakeForce;
+    public WheelCollider FL_Col, FR_Col, B_Left, B_Right;
+    public float SteerForce, MotorForce, BrakeForce;
+    public Rigidbody rb;
+    public float downForce = 111.81f;
+    public float topSpeed = 20f;
+    public float Strength = 10f;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
-	void Start()
-	{
-	
-	}
-
-	void Update()
-	{
-	}
-
-	void FixedUpdate()
-	{
-		float horizontal = Input.GetAxis("Horizontal") * SteerForce;
-		float vertical = Input.GetAxis("Vertical") * MotorForce;
-		Debug.Log(vertical);
-
-		B_Left.motorTorque = vertical;
-		B_Right.motorTorque = vertical;
-		F_Left.motorTorque = vertical;
-		F_Right.motorTorque = vertical;
-
-		F_Left.steerAngle = horizontal;
-		F_Right.steerAngle = horizontal;
+    void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal") * SteerForce;
+        rb.AddRelativeForce(0,-30000,0);
 
 
-		if (Input.GetKey(KeyCode.Space))
-		{
-			B_Left.brakeTorque = BrakeForce;
-			B_Right.brakeTorque = BrakeForce;
-		}
+       // rb.AddForce(-transform.up * 25000f);
+        //rb.transform.position += transform.TransformDirection(Vector3.down);
+        //addDownForce();
+        //B_Left.motorTorque = vertical;
+        //B_Right.motorTorque = vertical;
+        //rb.AddForce(-transform.up * 9.81f);
 
-		if (Input.GetKeyUp(KeyCode.Space))
-		{
-			B_Left.brakeTorque = 0;
-			B_Right.brakeTorque = 0;
-		}
+        FL_Col.steerAngle = horizontal;
+        FR_Col.steerAngle = horizontal;
+       
 
-		if (Input.GetAxis("Vertical") == 0)
-		{
-			B_Left.brakeTorque = BrakeForce;
-			B_Right.brakeTorque = BrakeForce;
-		}
-		else
-		{
-			B_Left.brakeTorque = 0;
-			B_Right.brakeTorque = 0;
-		}
-	}
+        if (Input.GetKey(KeyCode.Space))
+        {
+            B_Left.brakeTorque = BrakeForce;
+            B_Right.brakeTorque = BrakeForce;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            B_Left.brakeTorque = 0;
+            B_Right.brakeTorque = 0;
+        }
+
+        if (Input.GetAxis("Vertical") == 0)
+        {
+            B_Left.brakeTorque = BrakeForce;
+            B_Right.brakeTorque = BrakeForce;
+        }
+        else
+        {
+            B_Left.brakeTorque = 0;
+            B_Right.brakeTorque = 0;
+        }
+
+        //forward thrust
+        if (Input.GetKey("w"))
+        {
+
+
+            Vector3 v3Force = Strength * transform.forward * Time.deltaTime;
+            rb.AddForce(v3Force);
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
+
+        }
+
+        if (Input.GetKey("s"))
+        {
+
+            Vector3 v3Force = -Strength * transform.forward * Time.deltaTime;
+            rb.AddForce(v3Force);
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
+        }
+        if (Input.GetKey("a") && Input.GetKey(KeyCode.LeftShift))
+        {
+            transform.Rotate(0, 10 * horizontal * Time.deltaTime, 0);
+        }
+        if (Input.GetKey("d") && Input.GetKey(KeyCode.LeftShift))
+        {
+            transform.Rotate(0, 10 * horizontal * Time.deltaTime, 0);
+        }
+
+    }
 }
