@@ -64,14 +64,14 @@ public class CarControls : MonoBehaviour {
             rb.AddForce(v3Force);
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
         }
-        if (Input.GetKey("a") && Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey("a"))
         {
-            transform.Rotate(0, 10 * horizontal * Time.deltaTime, 0);
+            transform.Rotate(0, horizontal * Time.deltaTime, 0);
             Debug.Log(horizontal);
         }
-        if (Input.GetKey("d") && Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey("d"))
         {
-            transform.Rotate(0, 10 * horizontal * Time.deltaTime, 0);
+            transform.Rotate(0, horizontal * Time.deltaTime, 0);
             Debug.Log(horizontal);
         }
 
