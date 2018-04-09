@@ -1,57 +1,45 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CarControls : MonoBehaviour {
-
-    public WheelCollider F_Left, F_Right, B_Left, B_Right;
+public class CarControls : MonoBehaviour
+{
+    
+    public WheelCollider FL_Col, FR_Col, BL_Col, BR_Col;
     public float SteerForce, MotorForce, BrakeForce;
     public Rigidbody rb;
+    public float downForce = 111.81f;
     public float topSpeed = 20f;
     public float Strength = 10f;
-    void Start () {
-   
+    public float SpeedBoostTime = 3;
+    public float BoostStrengh = 10f;
+    Vector3 v3Force;
+    Vector3 v3SpeedBoost;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
     }
 
-    void FixedUpdate ()
+    void FixedUpdate()
     {
-        float horizontal = Input.GetAxis("Horizontal") * SteerForce ;
-		float vertical = Input.GetAxis ("Vertical") * MotorForce ;
+        float horizontal = Input.GetAxis("Horizontal") * SteerForce;
+        rb.AddRelativeForce(0,-30000,0);
 
-        //Debug.Log(vertical);
-		//B_Left.motorTorque = vertical;
-		//B_Right.motorTorque = vertical;
-
-        F_Left.steerAngle = horizontal;
-        F_Right.steerAngle = horizontal;
+        FL_Col.steerAngle = horizontal;
+        FR_Col.steerAngle = horizontal;
+        BL_Col.steerAngle = -horizontal;
+        BR_Col.steerAngle = -horizontal;
 
 
-		if (Input.GetKey (KeyCode.Space)) 
-		{
-			B_Left.brakeTorque = BrakeForce;
-			B_Right.brakeTorque = BrakeForce;
-		}
-
-		if(Input.GetKeyUp(KeyCode.Space))
-		{
-			B_Left.brakeTorque = 0;
-			B_Right.brakeTorque = 0;
-    	}
-
-		if (Input.GetAxis ("Vertical") == 0) {
-			B_Left.brakeTorque = BrakeForce;
-			B_Right.brakeTorque = BrakeForce;
-		} else {
-			B_Left.brakeTorque = 0;
-			B_Right.brakeTorque = 0;
-		}
 
         //forward thrust
+         v3Force = Strength * transform.forward * Time.deltaTime;
+        v3SpeedBoost = Strength * 2 * transform.forward * Time.deltaTime;
         if (Input.GetKey("w"))
         {
 
 
-            Vector3 v3Force = Strength * transform.forward * Time.deltaTime;
+
             rb.AddForce(v3Force);
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
 
@@ -60,20 +48,25 @@ public class CarControls : MonoBehaviour {
         if (Input.GetKey("s"))
         {
 
-            Vector3 v3Force = -Strength * transform.forward * Time.deltaTime;
-            rb.AddForce(v3Force);
+            
+            rb.AddForce(-v3Force);
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
         }
-        if (Input.GetKey("a"))
+
+        if (Input.GetKey(KeyCode.Space))
         {
-            transform.Rotate(0, horizontal * Time.deltaTime, 0);
-            Debug.Log(horizontal);
-        }
-        if (Input.GetKey("d"))
-        {
-            transform.Rotate(0, horizontal * Time.deltaTime, 0);
-            Debug.Log(horizontal);
+           
+            if(SpeedBoostTime > 0)
+            {
+                
+                rb.AddForce(v3SpeedBoost);
+                SpeedBoostTime = SpeedBoostTime - Time.deltaTime;
+            }
+            
+            
         }
 
     }
+   
+   
 }
