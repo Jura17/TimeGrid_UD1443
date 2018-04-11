@@ -11,7 +11,7 @@ public class CarControls : MonoBehaviour
     public float downForce = 111.81f;
     public float topSpeed = 20f;
     public float Strength = 10f;
-    public float SpeedBoostTime = 3;
+    public float SpeedBoostCount = 3;
     public float BoostStrengh = 10f;
     Vector3 v3Force;
     Vector3 v3SpeedBoost;
@@ -29,11 +29,11 @@ public class CarControls : MonoBehaviour
         FR_Col.steerAngle = horizontal;
         BL_Col.steerAngle = -horizontal;
         BR_Col.steerAngle = -horizontal;
-
-
+        
+        
 
         //forward thrust
-         v3Force = Strength * transform.forward * Time.deltaTime;
+        v3Force = Strength * transform.forward * Time.deltaTime;
         v3SpeedBoost = Strength * 2 * transform.forward * Time.deltaTime;
         if (Input.GetKey("w"))
         {
@@ -53,20 +53,27 @@ public class CarControls : MonoBehaviour
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, topSpeed);
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&& Strength == 4000000)
         {
            
-            if(SpeedBoostTime > 0)
+            if(SpeedBoostCount > 0)
             {
-                
-                rb.AddForce(v3SpeedBoost);
-                SpeedBoostTime = SpeedBoostTime - Time.deltaTime;
-            }
-            
-            
-        }
+                Strength = Strength * BoostStrengh;
+                rb.AddForce(v3Force);
 
+                SpeedBoostCount--;
+                
+            }
+            StartCoroutine("CallAfterTime");
+            print(Strength);
+        }
+        
     }
-   
-   
+        
+   IEnumerator CallAfterTime()
+    {
+        
+        yield return new WaitForSeconds(3);
+        Strength = Strength / BoostStrengh;
+    }
 }
