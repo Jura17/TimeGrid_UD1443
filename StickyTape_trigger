@@ -2,33 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StickyTape_OnStayTrigger : MonoBehaviour {
+public class StickyTape_OnStayTrigger : MonoBehaviour
+{
     public Rigidbody parent_rb;
-    private Collider other;
-
-    private void Start()
+    private Collider otherCollider;
+    public bool hangTime;
+    public bool getHangTime()
     {
-        
+        return hangTime;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("CarTrigger"))
+        {
+            hangTime = false;
+            this.otherCollider = other;
+            parent_rb = this.otherCollider.GetComponentInParent<Rigidbody>();
+            parent_rb.useGravity = false;
+        }
     }
 
     public void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("CarTrigger"))
+        if (other.gameObject.CompareTag("CarTrigger") && !parent_rb.useGravity)
         {
-            this.other = other;
-            parent_rb = this.other.GetComponentInParent<Rigidbody>();
-            parent_rb.useGravity = false;
+            this.otherCollider = other;
+            parent_rb = this.otherCollider.GetComponentInParent<Rigidbody>();
             parent_rb.AddRelativeForce(0, -30000, 0);
         }
     }
     public void OnTriggerExit(Collider other)
     {
-        parent_rb = this.other.GetComponentInParent<Rigidbody>();
+        hangTime = true;
+        this.otherCollider = other;
+        parent_rb = this.otherCollider.GetComponentInParent<Rigidbody>();
         parent_rb.useGravity = true;
-    }
 
-    private void FixedUpdate()
-    {
-        OnTriggerStay(other);
     }
 }
