@@ -1,0 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CollisionCheck : MonoBehaviour
+{
+    public Rigidbody parent_rb;
+    private bool isColliding = false;
+    private bool isSticking = false;
+    private void Start()
+    {
+        parent_rb = GetComponentInParent<Rigidbody>();
+        Debug.Log("Yo");
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("RacingTrack"))
+        {
+            Debug.Log("Collider in contact");
+            parent_rb.useGravity = false;
+            isColliding = true;
+            isSticking = true;
+}
+    }
+    public void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("RacingTrack"))
+        {
+            Debug.Log("Collider in contact / onTriggerStay");
+        }
+    }
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("RacingTrack"))
+        {
+            Debug.Log("Collider has lost contact");
+            isColliding = false;
+            isSticking = false;
+            parent_rb.useGravity = true;
+        }
+    }
+    private void FixedUpdate()
+    {
+        if (isSticking)
+        {
+            parent_rb.AddRelativeForce(0, -30000, 0);
+        }
+    }
+}
