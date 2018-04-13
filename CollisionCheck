@@ -7,11 +7,12 @@ public class CollisionCheck : MonoBehaviour
     public Rigidbody parent_rb;
     private bool isColliding = false;
     private bool isSticking = false;
+
     private void Start()
     {
         parent_rb = GetComponentInParent<Rigidbody>();
-        Debug.Log("Yo");
     }
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("RacingTrack"))
@@ -20,7 +21,7 @@ public class CollisionCheck : MonoBehaviour
             parent_rb.useGravity = false;
             isColliding = true;
             isSticking = true;
-}
+        }
     }
     public void OnTriggerStay(Collider other)
     {
@@ -45,5 +46,10 @@ public class CollisionCheck : MonoBehaviour
         {
             parent_rb.AddRelativeForce(0, -30000, 0);
         }
+    }
+
+    public bool getIsColliding()
+    {
+        return isColliding;
     }
 }
