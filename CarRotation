@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CarRotation : MonoBehaviour {
+
+	public CollisionCheck colliderObj;
+    private bool isColliding;
+    private Transform currentRotation;
+    private Transform finalRotation;
+    public float rotationSpeed = 0.2f;
+
+
+
+	void Update () {
+        isColliding = colliderObj.getIsColliding();
+        if (!isColliding) {
+            currentRotation = gameObject.transform;
+            finalRotation.rotation = Quaternion.Euler(0, 0, 0);
+
+            transform.rotation = Quaternion.Slerp(currentRotation.rotation, finalRotation.rotation, rotationSpeed);
+
+        }
+    }
+}
