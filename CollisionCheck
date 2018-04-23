@@ -46,7 +46,86 @@ public class CollisionCheck : MonoBehaviour
         {
             parent_rb.AddRelativeForce(0, -30000, 0);
         }
+    }using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CollisionCheck : MonoBehaviour
+{
+	public Rigidbody parent_rb;
+	public float gravityLocal = 500f;
+	private bool isColliding = false;
+	private bool isSticking = false;
+
+	private void Start()
+	{
+		parent_rb = GetComponentInParent<Rigidbody>();
+	}
+
+	public void OnTriggerEnter(Collider other)
+	{
+		if (other.gameObject.CompareTag("RacingTrack"))
+		{
+            parent_rb.useGravity = true;
+            isColliding = true;
+            isSticking = false;
+        }
+
+        if (other.gameObject.CompareTag("GravTrack"))
+        {
+            parent_rb.useGravity = false;
+            isColliding = true;
+            isSticking = true;
+        }
+	}
+	public void OnTriggerStay(Collider other)
+	{
+		if (other.gameObject.CompareTag("RacingTrack"))
+		{
+            parent_rb.useGravity = true;
+            isColliding = true;
+            isSticking = false;
+        }
+
+        if (other.gameObject.CompareTag("GravTrack"))
+        {
+            parent_rb.useGravity = false;
+            isColliding = true;
+            isSticking = true;
+        }
     }
+	public void OnTriggerExit(Collider other)
+	{
+        if (other.gameObject.CompareTag("RacingTrack"))
+        {
+            parent_rb.useGravity = true;
+            isColliding = false;
+            isSticking = false;
+        }
+
+        if (other.gameObject.CompareTag("GravTrack"))
+        {
+            parent_rb.useGravity = true;
+            isColliding = false;
+            isSticking = false;
+        }
+
+    }
+
+	private void FixedUpdate()
+	{
+		if (isSticking)
+		{
+            //Debug.Log("StickyTape");
+			parent_rb.AddRelativeForce(-Vector3.up * gravityLocal * Time.fixedDeltaTime);
+		}
+	}
+
+	public bool getIsColliding()
+	{
+		return isColliding;
+	}
+}
 
     public bool getIsColliding()
     {
