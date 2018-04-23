@@ -23,3 +23,60 @@ public class CarRotation : MonoBehaviour {
         }
     }
 }
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CarRotation : MonoBehaviour {
+
+	public CollisionCheck colliderObj;
+	private Rigidbody car_rb;
+	float currRotationX;
+	float currRotationY;
+	float currRotationZ;
+	float rotationSpeed = 2.0f;
+    float rotationForce = 5.0f;
+	bool isColliding = true;
+    Vector3 rotForceZ;
+
+	void Awake () {
+		car_rb = GetComponent<Rigidbody>();
+        rotForceZ = (rotationForce * transform.forward*Time.deltaTime);
+	}
+	
+	void Update () {
+		currRotationX = car_rb.transform.eulerAngles.x;
+		currRotationY = car_rb.transform.eulerAngles.y;
+		currRotationZ = car_rb.transform.eulerAngles.z;
+		isColliding = colliderObj.getIsColliding();
+		//Debug.Log("Collision " + colliderObj.getIsColliding());
+		if (!isColliding)
+		{
+            //if (currRotationX > 5 || currRotationX < -5)
+            //{
+            //    car_rb.AddTorque(rotForceZ);
+            //}
+
+            //if (currRotationY > 5 || currRotationY < -5)
+            //{
+            //    car_rb.AddTorque(rotForceZ);
+            //}
+
+            //if (currRotationZ > 5 || currRotationZ < -5)
+            //{
+            //    car_rb.AddTorque(rotForceZ);
+            //}
+
+
+
+            currRotationX = Mathf.LerpAngle(currRotationX, 0, rotationSpeed*Time.deltaTime);
+            currRotationZ = Mathf.LerpAngle(currRotationZ, 0, rotationSpeed*Time.deltaTime);
+
+            Quaternion currRotation = Quaternion.Euler(currRotationX, currRotationY, currRotationZ);
+            transform.rotation = currRotation;
+        }
+	}
+    
+
+
+}
