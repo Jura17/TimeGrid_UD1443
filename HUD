@@ -1,0 +1,149 @@
+using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class HUD : MonoBehaviour
+{
+
+    //Apply this script to the car and create tags on the power ups of the same string name
+
+    public float countdown;
+    private float countUp;
+    public int speedBoost;
+    private int checkPointLap = 0;
+    public Text countdownText;
+    public Text countUpText;
+    public Text speedBoostText;
+    public Text checkPointDifferenceText;
+    public Text checkPointLapText;
+    public float timeExtenderValue;
+    public float timeReducerValue;
+
+    public float checkpointTime1 = 0;
+    private float checkpointTime2;
+    private float checkpointDifference;
+
+    CheckpointCheck checkPointCheckObj;
+
+    void Start()
+    {
+        countdownText.text = "Countdown: " + countdown.ToString();
+        speedBoostText.text = "Speedboosts left: " + speedBoost.ToString();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("TimeExtender"))
+        {
+            countdown += timeExtenderValue;
+        }
+
+        else if (other.gameObject.CompareTag("TimeReducer"))
+        {
+            countdown -= timeReducerValue;
+        }
+
+        else if (other.gameObject.CompareTag("SpeedBoost"))
+        {
+
+            //if (speedBoost < 0)
+            //{
+            //    speedBoostText.text = "Speedboosts left: 0";
+            //}
+
+            if (speedBoost >= 5)
+            {
+                speedBoostText.text = "Speedboosts left: 5";
+            }
+
+            else
+            {
+                speedBoost++;
+                speedBoostText.text = "Speedboosts left: " + speedBoost.ToString();
+            }
+        }
+
+        else if (other.gameObject.CompareTag("CheckpointTime"))
+        {
+
+
+            checkpointDifference = checkpointTime2 - checkpointTime1;
+            checkPointDifferenceText.text = "Checkpoint time: " + checkpointDifference.ToString("F2");
+            checkpointTime1 = checkpointTime2;
+
+            //checkPointCheckObj.checkpointCheck.SetActive(true);
+        }
+
+        else if (other.gameObject.CompareTag("CheckpointLap"))
+        {
+            checkPointLap += 1;
+            checkPointLapText.text = "Checkpoint lap: " + checkPointLap.ToString();
+        }
+
+    }
+
+
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        countdown -= Time.deltaTime;
+        checkpointTime2 += Time.deltaTime;
+
+
+
+        if (countdown >= 0)
+        {
+            countUp += Time.deltaTime;
+        }
+
+
+        if (countdown <= 0)
+        {
+            countdownText.text = "Countdown: 00.00 ";
+            countUpText.text = "CountUp" + (Mathf.Ceil(countUp));
+        }
+
+        else
+        {
+            countdownText.text = "Countdown: " + countdown.ToString("F2");
+            countUpText.text = "CountUp: " + countUp.ToString("F2");
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (speedBoost <= 0)
+            {
+                speedBoostText.text = "Speedboosts left: 0";
+            }
+
+            else
+            {
+                speedBoost--;
+                speedBoostText.text = "Speedboosts left: " + speedBoost.ToString();
+            }
+        }
+        
+        //if (checkPointCheckObj.checkPointCheck == 1)
+        //{
+        //    checkPointCheckObj.compareTime += Time.deltaTime;
+        //    if (checkPointCheckObj.compareTime >= 10)
+        //    {
+        //        checkPointCheckObj.checkpointCheck.SetActive(true);
+        //    }
+
+        //}
+    }
+
+    private void LateUpdate()
+    {
+        
+    }
+
+    public float getCheckpointTime()
+    {
+        return checkpointDifference;
+    }
+}
