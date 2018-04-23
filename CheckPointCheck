@@ -1,0 +1,69 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+
+public class CheckpointCheck : MonoBehaviour
+{
+
+    public GameObject checkpointCheck;
+    //public Transform SpawnPoint;
+    private float checkPointPosYOffset;
+    private float compareTime;
+    private bool checkPointCheck = false;
+
+    void OnTriggerEnter()
+    {
+
+        //Instantiate(checkpointCheck, SpawnPoint.position, SpawnPoint.rotation);
+
+        //checkPointPosYOffset = 100000;
+        checkpointCheck.SetActive(false);
+
+
+        //checkpointCheck.transform.localPosition = new Vector3(checkpointCheck.transform.localPosition.x, checkpointCheck.transform.position.y - checkPointPosYOffset, checkpointCheck.transform.localPosition.z);
+        //checkPointCheck = true;
+    }
+
+    private void FixedUpdate()
+    {
+        //checkpointCheck.transform.localPosition = new Vector3(checkpointCheck.transform.localPosition.x, checkpointCheck.transform.localPosition.y, checkpointCheck.transform.localPosition.z);
+        if (checkPointCheck == true)
+        {
+
+            //checkpointCheck.transform.localPosition = new Vector3(checkpointCheck.transform.localPosition.x, checkpointCheck.transform.localPosition.y, checkpointCheck.transform.localPosition.z);
+            //checkpointCheck.SetActive(true);
+            compareTime += Time.deltaTime;
+            //Debug.Log(compareTime);
+            if (compareTime >= 5)
+            {
+                checkpointCheck.transform.localPosition = new Vector3(checkpointCheck.transform.localPosition.x, checkpointCheck.transform.position.y + checkPointPosYOffset, checkpointCheck.transform.localPosition.z);
+                //checkpointCheck.SetActive(true);
+                checkPointCheck = false;
+                compareTime = 0;
+            }
+        }
+    }
+
+    //public GameObject LapCompleteTrig;
+    //public GameObject LapTrig1;
+
+    //private void OnTriggerEnter(Collision other)
+    //{
+    //    if (other.gameObject.CompareTag("CheckpointTime"))
+    //    {
+    //        LapTrig1.SetActive(false);
+    //        LapCompleteTrig.SetActive(false);
+    //    }
+
+    //    if (other.gameObject.CompareTag("CheckpointLap"))
+    //    {
+    //        LapTrig1.SetActive(false);
+    //        LapCompleteTrig.SetActive(true);
+    //    }
+    //}
+
+
+
+}
