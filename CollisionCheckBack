@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CollisionCheckBack : MonoBehaviour
+{
+	public Rigidbody parent_rb;
+	public float gravityLocal = 500f;
+	private bool isColliding = false;
+	private bool boostGravity = false;
+
+	private void Start()
+	{
+		parent_rb = GetComponentInParent<Rigidbody>();
+	}
+
+    public void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("RacingTrack") || 
+            other.gameObject.CompareTag("GravTrack"))
+        {
+            Debug.Log("BackTrigger Enter, boost gravity: " + boostGravity);
+            boostGravity = false;
+        }
+    }
+
+    public void OnCollisionStay(Collision other)
+    {
+        if (other.gameObject.CompareTag("RacingTrack"))
+        {
+            Debug.Log("BackTrigger staying, boost gravity: " + boostGravity);
+            boostGravity = false;
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+	{
+        if (//other.gameObject.CompareTag("RacingTrack") || 
+            other.gameObject.CompareTag("GravTrack"))
+        {
+            Debug.Log("BackTrigger Exit, boost gravity: " + boostGravity);
+            boostGravity = true;
+        }
+
+    }
+
+	private void FixedUpdate()
+	{
+		if (boostGravity)
+		{
+			parent_rb.AddRelativeForce(-transform.up * gravityLocal);
+		}
+	}
+}
