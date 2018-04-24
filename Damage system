@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DamageSystem : MonoBehaviour {
+
+	public Material[] materials;
+	private Renderer render;
+	private int damage;
+
+	void Start () {
+		damage = 0;
+		render = GetComponent<Renderer>();
+		render.enabled = true;
+		render.material = materials[0];
+	}
+	
+	void OnTriggerEnter(Collider other)
+	{
+		if(other.gameObject.tag == "Wall")
+		{
+			print("Collision baby");
+			damage++;
+			if (damage == 1)
+				render.material = materials[1];
+			else if (damage == 2)
+				render.sharedMaterial = materials[2];
+		}
+	}
+
+
+}
