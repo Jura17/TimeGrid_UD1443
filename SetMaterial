@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+public class SetMaterial : MonoBehaviour {
+
+    public GameObject car;
+    public int index;
+    public Material[] carMat = new Material[4];
+    private int damage;
+    
+    
+    void Start() {
+        car.GetComponent<Renderer>().material = carMat[loadMaterial.matInd];
+        damage = 0;
+
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "DamagesCar")
+        {
+            print("Collision baby");
+            
+            damage++;
+
+            print(damage);
+        }
+
+        if (damage == 1)
+        {
+            car.GetComponent<Renderer>().material = carMat[2];
+        }
+
+        if (damage == 2)
+        {
+            car.GetComponent<Renderer>().material = carMat[3];
+        }
+
+    }
+
+   
+
+}
