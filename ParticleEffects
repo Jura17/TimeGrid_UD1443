@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ParticleEffects : MonoBehaviour {
+
+    private Rigidbody car_rb;
+    private ParticleSystem exhaust;
+    private float carVelocity;
+    public float exhaustRate;
+
+    void Start () {
+        car_rb = GetComponent<Rigidbody>();
+        exhaust = GetComponent<ParticleSystem>();
+    }
+	
+	  void Update () {
+        carVelocity = car_rb.velocity.magnitude;
+       // exhaust.emission.rateOverDistance = carVelocity * exhaustRate;
+  
+    }
+}
