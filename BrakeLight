@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BrakeLight : MonoBehaviour {
+
+    private Light light;
+
+	void Start () {
+        light = GetComponent<Light>();
+	}
+	
+	
+	void Update () {
+        if (Input.GetKey("s"))
+        {
+            light.intensity = 30;
+            
+        }
+        else
+            light.intensity = 15;
+    }
+}
