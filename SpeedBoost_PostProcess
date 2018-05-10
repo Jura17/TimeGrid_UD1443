@@ -1,0 +1,73 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.PostProcessing;
+using UnityEngine;
+
+public class PostProcess_SpeedBoost : MonoBehaviour {
+
+    public CarControls carCtrl_Obj;
+    private Rigidbody car_rb;
+    public PostProcessingProfile ppProfile;
+    private ChromaticAberrationModel.Settings chromaticAbSettings;
+    private BloomModel.Settings bloomSettings;
+    private VignetteModel.Settings vignetteSettings;
+    private float initialChrAb = 0.0f;
+    private float initialBloom = 1.0f;
+    private float initialVignette = 0.0f;
+
+    void Start () {
+        car_rb = GetComponent<Rigidbody>();
+        chromaticAbSettings.intensity = initialChrAb;
+        bloomSettings.bloom.intensity = initialBloom;
+        vignetteSettings.intensity = initialVignette;
+    }
+	
+	void Update () {
+        chromaticAbSettings = ppProfile.chromaticAberration.settings;
+        bloomSettings = ppProfile.bloom.settings;
+        vignetteSettings = ppProfile.vignette.settings;
+
+        if (carCtrl_Obj.GetSpeedBoostState() == true)
+        {
+            if (car_rb.velocity.z > 0)
+            {
+                chromaticAbSettings.intensity = (car_rb.velocity.z * 0.005f);
+                ppProfile.chromaticAberration.settings = chromaticAbSettings;
+                bloomSettings.bloom.intensity = (car_rb.velocity.z * 0.001f);
+                ppProfile.bloom.settings = bloomSettings;
+                vignetteSettings.intensity = (car_rb.velocity.z * 0.01f);
+                ppProfile.vignette.settings = vignetteSettings;
+            }
+        }
+        else
+            StartCoroutine("DecreaseEffects");
+    }
+
+    IEnumerator DecreaseEffects()
+        {
+        if (carCtrl_Obj.GetSpeedBoostState() == false && 
+            chromaticAbSettings.intensity != 0.0f &&
+            bloomSettings.bloom.intensity != 1.0f &&
+            vignetteSettings.intensity != 0.01f)
+        {
+            for (int i = 5; i > 0; i--)
+            {
+                chromaticAbSettings.intensity -= 0.001f;
+                ppProfile.chromaticAberration.settings = chromaticAbSettings;
+                yield return new WaitForSeconds(0.5f);
+            }
+            for (int i = 5; i > 0; i--)
+            {
+                bloomSettings.bloom.intensity -= 0.0002f;
+                ppProfile.bloom.settings = bloomSettings;
+                yield return new WaitForSeconds(0.5f);
+            }    
+            for (int i = 5; i > 0; i--)
+            {
+                vignetteSettings.intensity -= 0.002f;
+                ppProfile.vignette.settings = vignetteSettings;
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+    }
+}
