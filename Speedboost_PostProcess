@@ -1,0 +1,123 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.PostProcessing;
+using UnityEngine;
+
+public class PostProcess_SpeedBoost : MonoBehaviour {
+
+    public CarControls carCtrl_Obj;
+    private Rigidbody car_rb;
+    public PostProcessingProfile ppProfile;
+
+    private ChromaticAberrationModel.Settings chromaticAbSettings;
+    private float initialChrAbIntensity = 0.0f;
+
+    private BloomModel.Settings bloomSettings;
+    private float initialBloom_Intensity = 1.0f;
+	private float initialBloom_Threshold = 1.78f;
+	private float initialBloom_Softknee = 0.44f;
+	private float initialBloom_radius = 5.2f;
+	private float initialBloom_lensdirtIntensity = 2.8f;
+	private bool initialBloom_antiflicker = true;
+
+    private VignetteModel.Settings vignetteSettings;
+	private float initialVignette_Intensity = 0.0f;
+	private float initialVignette_centerX = 0.5f;
+	private float initialVignette_centerY = 0.5f;
+	private float initialVignette_smoothness = 0.2f;
+	private float initialVignette_roundness = 1.0f;
+	
+	private float resetSpeed = 2.0f;
+
+	void Start () {
+        car_rb = GetComponent<Rigidbody>();
+		resetChromaticAb();
+		resetBloom();
+		resetVignette();
+    }
+	
+	void Update () {
+		float currentChroAbIntensity = chromaticAbSettings.intensity;
+		float currentBloomIntensity = bloomSettings.bloom.intensity;
+		float currentVignetteIntensity = vignetteSettings.intensity;
+
+		//convert velocity Z from world axis to cars local axis
+		float velocityZ = transform.InverseTransformDirection(car_rb.velocity).z;
+
+        if (carCtrl_Obj.GetSpeedBoostState() == true)
+        {
+			if (velocityZ > 0)
+            {
+                chromaticAbSettings.intensity = (velocityZ * 0.004f);
+                ppProfile.chromaticAberration.settings = chromaticAbSettings;
+                //bloomSettings.bloom.intensity = (velocityZ * 0.004f + initialBloom_Intensity);
+                //ppProfile.bloom.settings = bloomSettings;
+                vignetteSettings.intensity = (velocityZ * 0.0017f);
+                ppProfile.vignette.settings = vignetteSettings;
+            }
+        }
+		else
+		{
+				currentChroAbIntensity = Mathf.Lerp(chromaticAbSettings.intensity, initialChrAbIntensity, Time.deltaTime * resetSpeed);
+				chromaticAbSettings.intensity = currentChroAbIntensity;
+				ppProfile.chromaticAberration.settings = chromaticAbSettings;
+
+				//currentBloomIntensity = Mathf.Lerp(bloomSettings.bloom.intensity, initialBloom_Intensity, Time.deltaTime * resetSpeed);
+				//bloomSettings.bloom.intensity = currentBloomIntensity;
+				//ppProfile.bloom.settings = bloomSettings;
+
+				currentVignetteIntensity = Mathf.Lerp(vignetteSettings.intensity, initialVignette_Intensity, Time.deltaTime * resetSpeed);
+				vignetteSettings.intensity = currentVignetteIntensity;
+				ppProfile.vignette.settings = vignetteSettings;
+
+				// rounding off intensity
+				if (chromaticAbSettings.intensity < initialChrAbIntensity + 0.01f)
+				{
+					resetChromaticAb();
+				}
+				//if(bloomSettings.bloom.intensity < initialBloom_Intensity + 0.01f)
+				//{
+				//	resetBloom();
+				//}
+				if(vignetteSettings.intensity < initialVignette_Intensity + 0.01f)
+				{
+					resetVignette();
+				}
+
+				// is intensity in fact back to normal?
+				if(chromaticAbSettings.intensity == initialChrAbIntensity &&
+					bloomSettings.bloom.intensity == initialBloom_Intensity &&
+					vignetteSettings.intensity == initialVignette_Intensity)
+				{
+					carCtrl_Obj.SetResetPpEffects(false);
+				}
+		}
+	}
+
+	void resetChromaticAb()
+	{
+		chromaticAbSettings.intensity = initialChrAbIntensity;
+		ppProfile.chromaticAberration.settings = chromaticAbSettings;
+	}
+
+	void resetBloom()
+	{
+		bloomSettings.bloom.intensity = initialBloom_Intensity;
+		bloomSettings.bloom.threshold = initialBloom_Threshold;
+		bloomSettings.bloom.softKnee = initialBloom_Softknee;
+		bloomSettings.bloom.radius = initialBloom_radius;
+		bloomSettings.bloom.antiFlicker = initialBloom_antiflicker;
+		bloomSettings.lensDirt.intensity = initialBloom_lensdirtIntensity;
+		ppProfile.bloom.settings = bloomSettings;
+	}
+
+	void resetVignette()
+	{
+		vignetteSettings.intensity = initialVignette_Intensity;
+		vignetteSettings.center.x = initialVignette_centerX;
+		vignetteSettings.center.y = initialVignette_centerY;
+		vignetteSettings.smoothness = initialVignette_smoothness;
+		vignetteSettings.roundness = initialVignette_roundness;
+		ppProfile.vignette.settings = vignetteSettings;
+	}
+}
