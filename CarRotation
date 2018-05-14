@@ -5,43 +5,17 @@ using UnityEngine;
 public class CarRotation : MonoBehaviour {
 
 	public CollisionCheck colliderObj;
-    private bool isColliding;
-    private Transform currentRotation;
-    private Transform finalRotation;
-    public float rotationSpeed = 0.2f;
-
-
-
-	void Update () {
-        isColliding = colliderObj.getIsColliding();
-        if (!isColliding) {
-            currentRotation = gameObject.transform;
-            finalRotation.rotation = Quaternion.Euler(0, 0, 0);
-
-            transform.rotation = Quaternion.Slerp(currentRotation.rotation, finalRotation.rotation, rotationSpeed);
-
-        }
-    }
-}
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CarRotation : MonoBehaviour {
-
-	public CollisionCheck colliderObj;
 	private Rigidbody car_rb;
 	float currRotationX;
 	float currRotationY;
 	float currRotationZ;
-	float rotationSpeed = 2.0f;
-    float rotationForce = 5.0f;
+	float rotationSpeed = 1.0f;
 	bool isColliding = true;
-    Vector3 rotForceZ;
+    RaycastHit hit;
+    float maxRayDistance = 100f;
 
 	void Awake () {
 		car_rb = GetComponent<Rigidbody>();
-        rotForceZ = (rotationForce * transform.forward*Time.deltaTime);
 	}
 	
 	void Update () {
@@ -49,34 +23,28 @@ public class CarRotation : MonoBehaviour {
 		currRotationY = car_rb.transform.eulerAngles.y;
 		currRotationZ = car_rb.transform.eulerAngles.z;
 		isColliding = colliderObj.getIsColliding();
-		//Debug.Log("Collision " + colliderObj.getIsColliding());
-		if (!isColliding)
-		{
-            //if (currRotationX > 5 || currRotationX < -5)
+
+        if (!isColliding)
+        {
+            //if (Physics.Raycast(transform.position, -transform.up, out hit, maxRayDistance))
             //{
-            //    car_rb.AddTorque(rotForceZ);
+            //    if (hit.collider.CompareTag("RacingTrack") || hit.collider.CompareTag("GravTrack")) {
+            //        float angle = Vector3.Angle(hit.normal, transform.position);
+            //        currRotationX = Mathf.LerpAngle(currRotationX, angle, rotationSpeed * Time.deltaTime);
+            //        currRotationZ = Mathf.LerpAngle(currRotationZ, angle, rotationSpeed * Time.deltaTime);
+
+            //        Quaternion currRotation = Quaternion.Euler(currRotationX, currRotationY, currRotationZ);
+            //        transform.rotation = currRotation;
+            //    }
             //}
 
-            //if (currRotationY > 5 || currRotationY < -5)
-            //{
-            //    car_rb.AddTorque(rotForceZ);
-            //}
-
-            //if (currRotationZ > 5 || currRotationZ < -5)
-            //{
-            //    car_rb.AddTorque(rotForceZ);
-            //}
-
-
-
-            currRotationX = Mathf.LerpAngle(currRotationX, 0, rotationSpeed*Time.deltaTime);
-            currRotationZ = Mathf.LerpAngle(currRotationZ, 0, rotationSpeed*Time.deltaTime);
+            currRotationX = Mathf.LerpAngle(currRotationX, 0, rotationSpeed * Time.deltaTime);
+            currRotationZ = Mathf.LerpAngle(currRotationZ, 0, rotationSpeed * Time.deltaTime);
 
             Quaternion currRotation = Quaternion.Euler(currRotationX, currRotationY, currRotationZ);
             transform.rotation = currRotation;
+
+
         }
 	}
-    
-
-
 }
